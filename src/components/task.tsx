@@ -1,35 +1,41 @@
-import { InputHTMLAttributes } from "react";
+import { InputHTMLAttributes, useState } from "react";
 import { TrashIcon } from "./icons/Trash";
-
+import { Task as TaskType } from "../App";
 interface TaskProps extends InputHTMLAttributes<HTMLInputElement> {
-  isCompleted: boolean;
-  task: string;
-  deleteTask: (task: string) => void;
+  task: TaskType;
+  onDeleteTask: (task: string) => void;
+  handleToggleTask: (taskName: string) => void;
 }
 
 export function Task({
-  isCompleted,
-  task = "",
-  deleteTask,
+  task,
+  onDeleteTask,
+  handleToggleTask,
   ...props
 }: TaskProps) {
+  function handleDeleteTask() {
+    onDeleteTask(task.task);
+  }
   return (
     <div className="p-4 rounded-lg bg-gray500 flex items-center justify-between mt-4">
       <div className="flex gap-3 items-center">
         <input
-          className="group w-6 h-6 checked:bg-purpleLight  text-purpleDark bg-gray500 rounded-full border-blueLight hover:bg-blueDark active:outline-none active:border-none active:hover:bg-purpleLight active:hover:outline-purpleLight"
+          className="group w-6 h-6 checked:bg-purpleLight  text-purpleDark bg-gray500 rounded-full border-blueLight hover:bg-blueDark "
           type="checkbox"
           id="task-box"
+          onClick={() => handleToggleTask(task.task)}
           {...props}
         />
         <label
           htmlFor="task-box"
-          className="group-checked:text-gray300 group-checked:decoration-dashed  text-gray100"
+          className={` ${
+            task.completed ? " text-gray300 line-through" : "text-gray100"
+          } `}
         >
-          {task}
+          <p>{task.task}</p>
         </label>
       </div>
-      <TrashIcon onClick={deleteTask} props={undefined} />
+      <TrashIcon onClick={handleDeleteTask} />
     </div>
   );
 }

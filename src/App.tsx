@@ -3,18 +3,44 @@ import Button from "./components/button";
 import { Task } from "./components/task";
 import { FormPlaceholder, PlusIcon, RocketIcon } from "./components/icons";
 
+export type Task = {
+  task: string;
+  completed: boolean;
+};
+
 function App() {
-  const [tasks, setTasks] = useState<string[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState<string>("");
 
+  const amountOfCompleted = tasks.filter(
+    (task) => task.completed === true
+  ).length;
+  const amounfOfTasks = tasks.length;
   function handleNewTaskChange(event: ChangeEvent<HTMLInputElement>) {
     event.target.setCustomValidity("");
     setNewTask(event.target.value);
   }
 
+  function handleToggleTask(taskName: string) {
+    const completeTask = tasks.map((task) => {
+      if (task.task === taskName) {
+        task.completed = !task.completed;
+      }
+      return task;
+    });
+
+    setTasks(completeTask);
+  }
+
   function handleCreateNewTask(event: FormEvent) {
     event.preventDefault();
-    setTasks([...tasks, newTask]);
+    setTasks([
+      ...tasks,
+      {
+        task: newTask,
+        completed: false,
+      },
+    ]);
     setNewTask("");
   }
   function handleNewTaskInvalid(event: InvalidEvent<HTMLInputElement>) {
@@ -23,7 +49,7 @@ function App() {
 
   function deleteTask(taskToDelete: string) {
     const tasksWithoutTheDeletedOne = tasks.filter(
-      (task) => task != taskToDelete
+      (task) => task.task != taskToDelete
     );
 
     setTasks(tasksWithoutTheDeletedOne);
@@ -61,13 +87,13 @@ function App() {
           <div className="flex gap-2">
             <p className="text-blueLight font-bold">Tarefas Criadas</p>
             <span className="bg-gray400 text-gray100 p-0.5 rounded-full">
-              0
+              {amounfOfTasks}
             </span>
           </div>
           <div className="flex gap-2 font-bold items-center">
             <p className="text-purpleDark">Concluídas</p>
             <span className="bg-gray400 text-gray100 p-0.5 rounded-full ">
-              0
+              {amountOfCompleted}
             </span>
           </div>
         </section>
@@ -75,7 +101,11 @@ function App() {
           {tasks.length > 0 ? (
             tasks.map((task) => (
               <div className="w-full">
-                <Task deleteTask={deleteTask} task={task} isCompleted={false} />
+                <Task
+                  handleToggleTask={handleToggleTask}
+                  onDeleteTask={deleteTask}
+                  task={task}
+                />
               </div>
             ))
           ) : (
