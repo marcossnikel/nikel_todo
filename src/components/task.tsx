@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, useState } from "react";
+import { InputHTMLAttributes } from "react";
 import { TrashIcon } from "./icons/Trash";
 import { Task as TaskType } from "../App";
 interface TaskProps extends InputHTMLAttributes<HTMLInputElement> {
